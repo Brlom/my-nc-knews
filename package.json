@@ -4,10 +4,13 @@
   "description": "## Northcoders News API",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "npm run seed && mocha spec",
+    "seed": "psql -f db/seed.sql",
     "lint": "eslint ./",
     "pre-commit": "npm t",
-    "posttest": "npm run lint"
+    "posttest": "npm run lint",
+    "dev": "node listen.js",
+    "reset": "knex migrate:rollback && knex migrate:latest && knex seed:run ./seeds/seed.js"
   },
   "repository": {
     "type": "git",
@@ -21,6 +24,8 @@
   },
   "homepage": "https://github.com/northcoders/BE2-NC-Knews#readme",
   "dependencies": {
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-plugin-import": "^2.14.0",
     "knex": "^0.15.2",
     "pg": "^7.6.1"
   },
