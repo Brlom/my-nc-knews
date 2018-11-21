@@ -4,9 +4,10 @@
   "description": "## Northcoders News API",
   "main": "index.js",
   "scripts": {
-    "test": "npm run seed && mocha spec",
+    "test": "psql -f db/test.seed.sql && mocha spec",
     "seed": "psql -f db/seed.sql",
     "lint": "eslint ./",
+    "fix": "eslint ./ --fix",
     "pre-commit": "npm t",
     "posttest": "npm run lint",
     "dev": "node listen.js",
@@ -24,6 +25,7 @@
   },
   "homepage": "https://github.com/northcoders/BE2-NC-Knews#readme",
   "dependencies": {
+    "body-parser": "^1.18.3",
     "chai": "^4.2.0",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-plugin-import": "^2.14.0",

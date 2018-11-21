@@ -5,7 +5,7 @@ const topicsRouter = require('./topics');
 const usersRouter = require('./users');
 
 apiRouter.get('/', (req, res) => {
-    res.send({ msg: 'Welcome to NorthCoders homepage!' });
+  res.send({ msg: 'Welcome to NorthCoders homepage!' });
 });
 
 apiRouter.use('/articles', articlesRouter);

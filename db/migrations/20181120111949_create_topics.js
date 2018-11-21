@@ -1,11 +1,11 @@
 
 exports.up = function (knex, Promise) {
-    return knex.schema.createTable("topics", topicsTable => {
-        topicsTable.string("slug").unique().primary();
-        topicsTable.string("description")
-    })
+  return knex.schema.createTable('topics', (topicsTable) => {
+    topicsTable.string('slug').unique().primary();
+    topicsTable.string('description');
+  });
 };
 
 exports.down = function (knex, Promise) {
-    return knex.schema.dropTable("topics")
+  return knex.schema.dropTableIfExists('topics');
 };
