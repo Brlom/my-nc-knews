@@ -1,6 +1,7 @@
 const { articleData, topicData, userData, commentData } = require('../data/development-data');
 
 exports.seed = function (knex, Promise) {
+  let user_data = [];
   // Deletes ALL existing entries
   return knex('topics').del()
     .then(() => {
@@ -17,6 +18,7 @@ exports.seed = function (knex, Promise) {
       return knex('topics').insert(topicData).returning('*');
     })
     .then(() => {
+      user_data.push(userData);
       return knex('users').insert(userData).returning('*');
     })
     .then((userSelect) => {
@@ -35,6 +37,8 @@ exports.seed = function (knex, Promise) {
         let new_obj = Object.assign({}, curr);
         new_obj.article_id = articleSelect.find(obj => obj.title == curr.belongs_to).article_id;
         delete new_obj.belongs_to;
+        user_data.user_id = userData.find(obj => obj.username == curr.created_by).user_id;
+        delete new_obj.created_by;
         new_obj.created_at = new Date(curr.created_at);
         acc.push(new_obj);
         return acc
