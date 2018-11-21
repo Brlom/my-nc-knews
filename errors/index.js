@@ -4,14 +4,17 @@
 
 exports.handle400s = (err, req, res, next) => {
     // console.log(err)
-    // better way of doing this: 
-    // use object of codes where the values are a different msg to client
-    // make the if statement re-usable
-    const code400s = ['42703', '22P02', '23502'];
-    if (code400s.includes(err.code)) {
-        res.status(err.status || 400).send(err.msg || 'Bad request')
+    const code400s = {
+        '42703': 'Bad request: column undefined',
+        '22P02': 'Bad request: invalid text representation',
+        '23502': 'Bad request: NOT NULL violation'
+    };
+    //code400s[err.code]
+    if (code400s[err.code]) {
+        res.status(err.status || 400).send(err.msg || code400s[err.code])
+    } else {
+        next(err);
     }
-    next(err);
 }
 
 exports.handle404s = (err, req, res, next) => {
@@ -20,6 +23,14 @@ exports.handle404s = (err, req, res, next) => {
     }
     next(err)
 }
+
+// exports.handle405s = (err, req, res, next) => {
+
+// }
+
+// exports.handle422s = (err, req, res, next) => {
+
+// }
 
 exports.handle500s = (err, req, res, next) => {
     // console.log('ALSO HERE')
