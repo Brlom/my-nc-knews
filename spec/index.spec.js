@@ -18,7 +18,7 @@ describe('/api', () => {
       expect(body).to.have.all.keys('msg');
     }));
   describe('/topics', () => {
-    it('GET returns 200 and topics object', () => request
+    it('GET returns 200 and topics array with topics objects', () => request
       .get('/api/topics')
       .expect(200)
       .then(({ body }) => {
@@ -29,65 +29,40 @@ describe('/api', () => {
           'slug',
           'description',
         );
-      }));
-  });
-  // describe('/users', () => {
-  //     it('GET returns 200 and users object', () => {
-  //         return request
-  //             .get('/api/users')
-  //             .expect(200)
-  //             .then(({ body }) => {
-  //                 expect(body).to.have.all.keys('users');
-  //                 expect(body.users.length).to.equal(4);
-  //                 expect(body.users[0]).to.be.an('object');
-  //                 expect(body.users[0]).to.have.all.keys(
-  //                     'user_id',
-  //                     'username',
-  //                     'avatar_url',
-  //                     'name'
-  //                 );
-  //             })
-  //     })
-  // })
-  // describe('/articles', () => {
-  //     it('GET returns 200 and articles object', () => {
-  //         return request
-  //         .get('/api/articles')
-  //         .expect(200)
-  //         .then(({ body }) => {
-  //             expect(body).to.have.all.keys('articles');
-  //             expect(body.articles.length).to.equal(4);
-  //             expect(body.articles[0]).to.be.an('object');
-  //             expect(body.articles[0]).to.have.all.keys(
-  //                 'article_id',
-  //                 'title',
-  //                 'body',
-  //                 'votes',
-  //                 'topic',
-  //                 'user_id',
-  //                 'created_at'
-  //             );
-  //         })
-  //     })
-  // })
-  // describe('/comments', () => {
-  //     it('GET returns 200 and comments object', () => {
-  //         return request
-  //         .get('/api/comments')
-  //         .expect(200)
-  //         .then(({ body }) => {
-  //             expect(body).to.have.all.keys('comments');
-  //             expect(body.comments.length).to.equal(4);
-  //             expect(body.comments[0]).to.be.an('object');
-  //             expect(body.comments[0]).to.have.all.keys(
-  //                 'comment_id',
-  //                 'user_id',
-  //                 'article_id',
-  //                 'votes',
-  //                 'created_at',
-  //                 'body'
-  //             );
-  //         })
-  //     })
-  // })
+      })
+    );
+    it('POST returns 201 and new topic object', () => {
+      const newTopic = {
+        'slug': 'chuckNorris',
+        'description': 'You don\'t find him, he find\'s you'
+      }
+      return request
+        .post('/api/topics')
+        .send(newTopic)
+        .expect(201)
+        .then(({ body }) => {
+          expect(body.topic).to.be.an('object');
+          expect(body.topic).to.have.all.keys("slug", "description");
+        })
+    });
+    it('GET returns 200 and an object of all topic articles', () => {
+      return request
+        .get('/api/topics/cats/articles')
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).to.have.all.keys('articles');
+          expect(body.articles.length).to.equal(3);
+          expect(body.articles[0]).to.be.an('object');
+          expect(body.articles[0]).to.have.all.keys(
+            // 'author',
+            'title',
+            'article_id',
+            'votes',
+            // 'comment_count',
+            'created_at',
+            'topic'
+          );
+        })
+    })
+  })
 });
