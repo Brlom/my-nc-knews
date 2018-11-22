@@ -83,6 +83,18 @@ describe('/api', () => {
           expect(body[body.length - 1].title).to.equal(lastArticleDesc);
         });
     });
+    it('GET returns 200 and an array of objects sorted in asc order', () => {
+      const firstArticleDesc = 'Moustache';
+      const lastArticleDesc = 'Living in the shadow of a great man';
+      return request
+        .get('/api/topics/mitch/articles?order=asc&limit=11')
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.length).to.equal(11);
+          expect(body[0].title).to.equal(firstArticleDesc);
+          expect(body[body.length - 1].title).to.equal(lastArticleDesc);
+        });
+    });
     it('GET returns 200 and a specified start page', () => {
       const p = 3;
       return request
@@ -90,6 +102,21 @@ describe('/api', () => {
         .expect(200)
         .then(({ body }) => {
           expect(body.length).to.equal(8);
+        });
+    });
+    it('POST returns 201 and new article', () => {
+      const newArticle = {
+        title: 'Around the world in 22 seconds',
+        body: 'blablablablabla',
+        user_id: 1,
+      };
+      return request
+        .post('/api/topics/cats/articles')
+        .send(newArticle)
+        .expect(201)
+        .then(({ body }) => {
+          expect(body.article).to.be.an('object');
+          expect(body.article).to.have.all.keys('article_id', 'title', 'created_at', 'votes', 'body', 'user_id', 'topic');
         });
     });
   });

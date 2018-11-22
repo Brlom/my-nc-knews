@@ -1,9 +1,9 @@
 const db = require('../db/connection');
 
-const validateQueries = (rawQueries, ...validQueries) => validQueries.reduce((filtered, query) => {
-  if (rawQueries[query]) filtered[query] = rawQueries[query];
-  return filtered;
-}, {});
+// const validateQueries = (rawQueries, ...validQueries) => validQueries.reduce((filtered, query) => {
+//   if (rawQueries[query]) filtered[query] = rawQueries[query];
+//   return filtered;
+// }, {});
 
 exports.getAllTopics = (req, res, next) => db('topics')
   .select()
@@ -21,7 +21,6 @@ exports.postNewTopic = (req, res, next) => db('topics')
   .catch(next);
 
 exports.getArticlesByTopic = (req, res, next) => {
-  const query = validateQueries(req.query);
   const { topic } = req.params;
   const {
     limit, sortBy, order, p,
@@ -38,9 +37,16 @@ exports.getArticlesByTopic = (req, res, next) => {
     .limit(limit || 10)
     .orderBy(sortBy || 'created_at', order || 'desc')
     .offset(p || 0)
-    .where(query)
     .then((articles) => {
       res.status(200).send(articles);
     })
     .catch(next);
 };
+
+exports.createArticleWithTopic = (req, res, next) => db('articles')
+  .insert({ title: req.body.title, body: req.body.body, user_id: req.body.user_id, topic: req.params.topic })
+  .returning('*')
+  .then(([article]) => {
+    res.status(201).send({ article });
+  })
+  .catch(next);
