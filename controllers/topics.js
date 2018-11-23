@@ -1,10 +1,5 @@
 const db = require('../db/connection');
 
-// const validateQueries = (rawQueries, ...validQueries) => validQueries.reduce((filtered, query) => {
-//   if (rawQueries[query]) filtered[query] = rawQueries[query];
-//   return filtered;
-// }, {});
-
 exports.getAllTopics = (req, res, next) => db('topics')
   .select()
   .then((topics) => {
@@ -44,7 +39,9 @@ exports.getArticlesByTopic = (req, res, next) => {
 };
 
 exports.createArticleWithTopic = (req, res, next) => db('articles')
-  .insert({ title: req.body.title, body: req.body.body, user_id: req.body.user_id, topic: req.params.topic })
+  .insert({
+    title: req.body.title, body: req.body.body, user_id: req.body.user_id, topic: req.params.topic,
+  })
   .returning('*')
   .then(([article]) => {
     res.status(201).send({ article });

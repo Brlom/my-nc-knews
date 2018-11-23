@@ -96,7 +96,6 @@ describe('/api', () => {
         });
     });
     it('GET returns 200 and a specified start page', () => {
-      const p = 3;
       return request
         .get('/api/topics/mitch/articles?p=3')
         .expect(200)
@@ -118,6 +117,83 @@ describe('/api', () => {
           expect(body.article).to.be.an('object');
           expect(body.article).to.have.all.keys('article_id', 'title', 'created_at', 'votes', 'body', 'user_id', 'topic');
         });
+    });
+  });
+  describe('/articles', () => {
+    it('GET returns 200 and an array of article objects', () => request
+      .get('/api/articles')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.length).to.equal(10);
+        expect(body).to.be.an('array');
+        expect(body[0]).to.have.all.keys(
+          'author',
+          'title',
+          'article_id',
+          'votes',
+          'comment_count',
+          'created_at',
+          'topic',
+        );
+      }));
+    it('GET returns 200 and an object where responses are limited', () => {
+      const limit = 11;
+      return request
+        .get('/api/articles?limit=10')
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.length).to.be.below(limit);
+        });
+    });
+    it('GET returns 200 and an array of objects sorted by date', () => {
+      const firstArticleDesc = 'Living in the shadow of a great man';
+      const lastArticleDesc = 'Moustache';
+      return request
+        .get('/api/articles?sortBy=created_at&limit=12')
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.length).to.equal(12);
+          expect(body[0].title).to.equal(firstArticleDesc);
+          expect(body[body.length - 1].title).to.equal(lastArticleDesc);
+        });
+    });
+    it('GET returns 200 and an array of objects sorted in asc order', () => {
+      const firstArticleDesc = 'Moustache';
+      const lastArticleDesc = 'Living in the shadow of a great man';
+      return request
+        .get('/api/articles?order=asc&limit=12')
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.length).to.equal(12);
+          expect(body[0].title).to.equal(firstArticleDesc);
+          expect(body[body.length - 1].title).to.equal(lastArticleDesc);
+        });
+    });
+    it('GET returns 200 and a specified start page', () => {
+      return request
+        .get('/api/articles?p=3')
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.length).to.equal(9);
+        });
+    });
+    it('GET returns 200 and an article object by id', () => {
+      return request
+        .get('/api/articles/1')
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.length).to.equal(1);
+          expect(body).to.be.an('array');
+          expect(body[0]).to.have.all.keys(
+            'author',
+            'title',
+            'article_id',
+            'votes',
+            'comment_count',
+            'created_at',
+            'topic',
+          );
+        })
     });
   });
 });

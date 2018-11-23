@@ -184,7 +184,7 @@ Queries
 ```http
 POST /api/articles/:article_id/comments
 ```
-- accepts an object with `article_id`,`user_id` and `body`
+- accepts an object with `user_id` and `body`
 - responds with the posted comment
 
 
