@@ -8,7 +8,10 @@ exports.getAllTopics = (req, res, next) => db('topics')
   .catch(next);
 
 exports.postNewTopic = (req, res, next) => db('topics')
-  .insert({ slug: req.body.slug, description: req.body.description })
+  .insert({
+    slug: req.body.slug,
+    description: req.body.description
+  })
   .returning('*')
   .then(([topic]) => {
     res.status(201).send({ topic });
@@ -18,7 +21,10 @@ exports.postNewTopic = (req, res, next) => db('topics')
 exports.getArticlesByTopic = (req, res, next) => {
   const { topic } = req.params;
   const {
-    limit, sortBy, order, p,
+    limit,
+    sortBy,
+    order,
+    p,
   } = req.query;
   return db('articles')
     .select('articles.article_id', 'title', 'articles.votes', 'articles.created_at', 'topic', 'users.username as author')

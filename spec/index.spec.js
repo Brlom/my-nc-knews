@@ -320,4 +320,34 @@ describe('/api', () => {
         .get('/api/articles/1/comments/2')
         .expect(404)));
   });
+  describe('/users', () => {
+    it('GET returns 200 and users array with users objects', () => request
+      .get('/api/users')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.users.length).to.equal(3);
+        expect(body.users).to.be.an('array');
+        expect(body.users[0]).to.have.all.keys(
+          'user_id',
+          'username',
+          'avatar_url',
+          'name',
+        );
+      }));
+    it('GET returns 200 and single user object by id', () => request
+      .get('/api/users/rogersop')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).to.be.an('object');
+        expect(body).to.have.all.keys(
+          'user_id',
+          'username',
+          'avatar_url',
+          'name',
+        );
+      }));
+    it('GET returns 404 when non-existent username is used', () => request
+      .get('/api/users/rango')
+      .expect(404));
+  });
 });

@@ -1,25 +1,28 @@
 const articlesRouter = require('express').Router();
 const {
-  getAllArticles,
-  getArticleById,
-  updateVotesById,
-  deleteArticleById,
-  getCommentsByArticleId,
-  postCommentByArticleId,
-  updateCommentVotes,
-  deleteCommentById,
+    getAllArticles,
+    getArticleById,
+    updateVotesById,
+    deleteArticleById,
+    getCommentsByArticleId,
+    postCommentByArticleId,
+    updateCommentVotes,
+    deleteCommentById,
 } = require('../controllers/articles');
 
 articlesRouter.get('/', getAllArticles);
 
-articlesRouter.get('/:article_id', getArticleById);
-articlesRouter.patch('/:article_id', updateVotesById);
-articlesRouter.delete('/:article_id', deleteArticleById);
+articlesRouter.route('/:article_id')
+    .get(getArticleById)
+    .patch(updateVotesById)
+    .delete(deleteArticleById)
 
-articlesRouter.get('/:article_id/comments', getCommentsByArticleId);
-articlesRouter.post('/:article_id/comments', postCommentByArticleId);
+articlesRouter.route('/:article_id/comments')
+    .get(getCommentsByArticleId)
+    .post(postCommentByArticleId)
 
-articlesRouter.patch('/:article_id/comments/:comment_id', updateCommentVotes);
-articlesRouter.delete('/:article_id/comments/:comment_id', deleteCommentById);
+articlesRouter.route('/:article_id/comments/:comment_id')
+    .patch(updateCommentVotes)
+    .delete(deleteCommentById)
 
 module.exports = articlesRouter;
