@@ -11,11 +11,13 @@ describe('/api', () => {
     .then(() => db.migrate.latest())
     .then(() => db.seed.run()));
   after(() => db.destroy());
-  it('GET returns 200 and welcome msg', () => request
+  it('GET returns 200 and apiEndpoints describer', () => request
     .get('/api')
     .expect(200)
     .then(({ body }) => {
-      expect(body).to.have.all.keys('msg');
+      expect(body).to.have.all.keys('apiEndpoints');
+      expect(body.apiEndpoints.apiEndpoints.length).to.equal(8);
+      expect(body.apiEndpoints.apiEndpoints[0]).to.haveOwnProperty('/api/topics');
     }));
   describe('/topics', () => {
     it('GET returns 200 and topics array with topics objects', () => request

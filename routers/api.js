@@ -1,10 +1,11 @@
 const apiRouter = require('express').Router();
+const apiEndpoints = require('./apiEndpoints');
 const articlesRouter = require('./articles');
 const topicsRouter = require('./topics');
 const usersRouter = require('./users');
 
 apiRouter.get('/', (req, res) => {
-  res.send({ msg: 'Welcome to NorthCoders homepage!' });
+  res.send({ apiEndpoints });
 });
 
 apiRouter.use('/articles', articlesRouter);

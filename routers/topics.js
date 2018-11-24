@@ -8,10 +8,10 @@ const {
 
 topicsRouter.route('/')
   .get(getAllTopics)
-  .post(postNewTopic)
+  .post(postNewTopic);
 
 topicsRouter.route('/:topic/articles')
   .get(getArticlesByTopic)
-  .post(createArticleWithTopic)
+  .post(createArticleWithTopic);
 
 module.exports = topicsRouter;

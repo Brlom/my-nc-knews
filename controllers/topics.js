@@ -10,7 +10,7 @@ exports.getAllTopics = (req, res, next) => db('topics')
 exports.postNewTopic = (req, res, next) => db('topics')
   .insert({
     slug: req.body.slug,
-    description: req.body.description
+    description: req.body.description,
   })
   .returning('*')
   .then(([topic]) => {
