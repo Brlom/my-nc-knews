@@ -153,7 +153,6 @@ PATCH /api/articles/:article_id
     E.g  `{ inc_votes : 1 }` would increment the current article's vote property by 1
          `{ inc_votes : -100 }` would decrement the current article's vote property by 100
 
-
 ```http
 DELETE /api/articles/:article_id
 ```

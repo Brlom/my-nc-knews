@@ -31,7 +31,7 @@ describe('/api', () => {
         );
       }));
     it('GET returns 404 and an error message', () => request
-      .get('/api/djfsfjdsf')
+      .get('/api/topics/djfsfjdsf')
       .expect(404));
     it('POST returns 201 and new topic object', () => {
       const newTopic = {
@@ -46,6 +46,16 @@ describe('/api', () => {
           expect(body.topic).to.be.an('object');
           expect(body.topic).to.have.all.keys('slug', 'description');
         });
+    });
+    it('POST returns 400', () => {
+      const newTopic = {
+        slg: 'ChuckNorris',
+        description: 'You don\'t find him, he find\'s you',
+      };
+      return request
+        .post('/api/topics/')
+        .send(newTopic)
+        .expect(400);
     });
     it('GET returns 200 and an object of all topic articles', () => request
       .get('/api/topics/cats/articles')
@@ -65,10 +75,10 @@ describe('/api', () => {
     it('GET returns 200 and an object where responses are limited', () => {
       const limit = 10;
       return request
-        .get('/api/topics/cats/articles?limit=10')
+        .get(`/api/topics/cats/articles?limit=${limit}`)
         .expect(200)
         .then(({ body }) => {
-          expect(body.length).to.be.below(limit);
+          expect(body.length).to.be.most(limit);
         });
     });
     it('GET returns 200 and an array of objects sorted by date', () => {
@@ -95,14 +105,12 @@ describe('/api', () => {
           expect(body[body.length - 1].title).to.equal(lastArticleDesc);
         });
     });
-    it('GET returns 200 and a specified start page', () => {
-      return request
-        .get('/api/topics/mitch/articles?p=3')
-        .expect(200)
-        .then(({ body }) => {
-          expect(body.length).to.equal(8);
-        });
-    });
+    it('GET returns 200 and a specified start page', () => request
+      .get('/api/topics/mitch/articles?p=3')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.length).to.equal(8);
+      }));
     it('POST returns 201 and new article', () => {
       const newArticle = {
         title: 'Around the world in 22 seconds',
@@ -137,12 +145,12 @@ describe('/api', () => {
         );
       }));
     it('GET returns 200 and an object where responses are limited', () => {
-      const limit = 11;
+      const limit = 5;
       return request
-        .get('/api/articles?limit=10')
+        .get(`/api/articles?limit=${limit}`)
         .expect(200)
         .then(({ body }) => {
-          expect(body.length).to.be.below(limit);
+          expect(body.length).to.be.most(limit);
         });
     });
     it('GET returns 200 and an array of objects sorted by date', () => {
@@ -169,31 +177,111 @@ describe('/api', () => {
           expect(body[body.length - 1].title).to.equal(lastArticleDesc);
         });
     });
-    it('GET returns 200 and a specified start page', () => {
+    it('GET returns 200 and a specified start page', () => request
+      .get('/api/articles?p=3')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.length).to.equal(9);
+      }));
+    it('GET returns 200 and an article object by id', () => request
+      .get('/api/articles/1')
+      .expect(200)
+      .then(({ body }) => {
+        expect(Object.keys(body).length).to.equal(7);
+        expect(body).to.be.an('object');
+        expect(body).to.have.all.keys(
+          'author',
+          'title',
+          'article_id',
+          'votes',
+          'comment_count',
+          'created_at',
+          'topic',
+        );
+      }));
+    it('PATCH returns 200 and updates votes', () => {
+      const updatedArticle = {
+        inc_votes: 2,
+      };
       return request
-        .get('/api/articles?p=3')
+        .patch('/api/articles/1')
+        .send(updatedArticle)
         .expect(200)
         .then(({ body }) => {
-          expect(body.length).to.equal(9);
+          expect(body).to.be.an('object');
+          expect(body.votes).to.equal(102);
         });
     });
-    it('GET returns 200 and an article object by id', () => {
-      return request
+    it('DELETE returns 200 and deletes article, returning empty object', () => request
+      .delete('/api/articles/1')
+      .expect(200)
+      .then(() => request
         .get('/api/articles/1')
+        .expect(404)));
+    it('GET returns 200 and an array of comments by article id', () => request
+      .get('/api/articles/1/comments')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.length).to.equal(10);
+        expect(body).to.be.an('array');
+        expect(body[0]).to.have.all.keys(
+          'author',
+          'votes',
+          'comment_id',
+          'created_at',
+          'body',
+        );
+      }));
+    it('GET returns 200 and an object where responses are limited', () => {
+      const limit = 5;
+      return request
+        .get(`/api/articles/1/comments?limit=${limit}`)
         .expect(200)
         .then(({ body }) => {
-          expect(body.length).to.equal(1);
-          expect(body).to.be.an('array');
-          expect(body[0]).to.have.all.keys(
-            'author',
-            'title',
-            'article_id',
-            'votes',
-            'comment_count',
-            'created_at',
-            'topic',
-          );
-        })
+          expect(body.length).to.be.most(limit);
+        });
     });
+    it('GET returns 200 and an array of objects sorted by date', () => {
+      const firstCommentSubStr = 'The beautiful thing about treasure is that it exists.';
+      const lastCommentDesc = 'Massive intercranial brain haemorrhage';
+      return request
+        .get('/api/articles/1/comments?sortBy=created_at&limit=11')
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.length).to.equal(11);
+          expect(body[0].body).to.have.string(firstCommentSubStr);
+          expect(body[body.length - 1].body).to.equal(lastCommentDesc);
+        });
+    });
+    it('GET returns 200 and an array of objects sorted by votes', () => {
+      const firstCommentSubStr = 'Replacing the quiet elegance of the dark suit and tie with the casual indifference of these';
+      const lastCommentDesc = 'Fruit pastilles';
+      return request
+        .get('/api/articles/1/comments?sortBy=votes&limit=11')
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.length).to.equal(11);
+          expect(body[0].body).to.have.string(firstCommentSubStr);
+          expect(body[body.length - 1].body).to.equal(lastCommentDesc);
+        });
+    });
+    it('GET returns 200 and an array of objects sorted in asc order', () => {
+      const firstCommentSubStr = 'I hate streaming noses';
+      const lastCommentDesc = 'This morning, I showered for nine minutes.';
+      return request
+        .get('/api/articles/1/comments?order=asc')
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.length).to.equal(10);
+          expect(body[0].body).to.equal(lastCommentDesc);
+          expect(body[body.length - 1].body).to.equal(firstCommentSubStr);
+        });
+    });
+    it('GET returns 200 and a specified start page', () => request
+      .get('/api/articles/1/comments?limit=5&?p=3')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.length).to.equal(5);
+      }));
   });
 });
