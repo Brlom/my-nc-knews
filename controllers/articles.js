@@ -58,7 +58,7 @@ exports.deleteArticleById = (req, res, next) => {
   return db('articles')
     .where('articles.article_id', article_id)
     .del()
-    .then((article) => {
+    .then(() => {
       res.status(200).send();
     })
     .catch(next);
@@ -82,6 +82,43 @@ exports.getCommentsByArticleId = (req, res, next) => {
     .offset(p || 0)
     .then((comments) => {
       res.status(200).send(comments);
+    })
+    .catch(next);
+};
+
+exports.postCommentByArticleId = (req, res, next) => {
+  const { article_id } = req.params;
+  return db('comments')
+    .insert({ article_id, user_id: req.body.user_id, body: req.body.body })
+    .returning('*')
+    .then(([comment]) => {
+      res.status(201).send(comment);
+    })
+    .catch(next);
+};
+
+exports.updateCommentVotes = (req, res, next) => {
+  const { article_id, comment_id } = req.params;
+  const { inc_votes } = req.body;
+  return db('comments')
+    .where('article_id', article_id)
+    .where('comment_id', comment_id)
+    .increment('votes', inc_votes)
+    .returning('*')
+    .then(([comment]) => {
+      res.status(200).send(comment);
+    })
+    .catch(next);
+};
+
+exports.deleteCommentById = (req, res, next) => {
+  const { article_id, comment_id } = req.params;
+  return db('comments')
+    .where('article_id', article_id)
+    .where('comment_id', comment_id)
+    .del()
+    .then(() => {
+      res.status(200).send();
     })
     .catch(next);
 };

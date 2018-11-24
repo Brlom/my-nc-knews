@@ -260,6 +260,8 @@ describe('/api', () => {
         .get('/api/articles/1/comments?sortBy=votes&limit=11')
         .expect(200)
         .then(({ body }) => {
+          // const voteArr = body.map(obj => obj.votes);
+          // expect(voteArr).to.
           expect(body.length).to.equal(11);
           expect(body[0].body).to.have.string(firstCommentSubStr);
           expect(body[body.length - 1].body).to.equal(lastCommentDesc);
@@ -283,5 +285,39 @@ describe('/api', () => {
       .then(({ body }) => {
         expect(body.length).to.equal(5);
       }));
+    it('POST returns 201 and new comment by article id', () => {
+      const newComment = {
+        body: 'home, home on the range..',
+        user_id: 1,
+      };
+      return request
+        .post('/api/articles/1/comments')
+        .send(newComment)
+        .expect(201)
+        .then(({ body }) => {
+          expect(body).to.be.an('object');
+          expect(body).to.have.all.keys('comment_id', 'user_id', 'article_id', 'created_at', 'votes', 'body');
+          expect(body.article_id).to.equal(1);
+        });
+    });
+    it('PATCH returns 200 and updates votes', () => {
+      const updatedComment = {
+        inc_votes: 2,
+      };
+      return request
+        .patch('/api/articles/1/comments/2')
+        .send(updatedComment)
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).to.be.an('object');
+          expect(body.votes).to.equal(-98);
+        });
+    });
+    it('DELETE returns 200 and deletes comment, returning empty object', () => request
+      .delete('/api/articles/1/comments/2')
+      .expect(200)
+      .then(() => request
+        .get('/api/articles/1/comments/2')
+        .expect(404)));
   });
 });

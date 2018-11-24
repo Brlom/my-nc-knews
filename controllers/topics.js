@@ -38,12 +38,19 @@ exports.getArticlesByTopic = (req, res, next) => {
     .catch(next);
 };
 
-exports.createArticleWithTopic = (req, res, next) => db('articles')
-  .insert({
-    title: req.body.title, body: req.body.body, user_id: req.body.user_id, topic: req.params.topic,
-  })
-  .returning('*')
-  .then(([article]) => {
-    res.status(201).send({ article });
-  })
-  .catch(next);
+exports.createArticleWithTopic = (req, res, next) => {
+  // const { topic } = req.params;
+  // TODO: fix this
+  db('articles')
+    .insert({
+      title: req.body.title,
+      body: req.body.body,
+      user_id: req.body.user_id,
+      topic: req.params.topic,
+    })
+    .returning('*')
+    .then(([article]) => {
+      res.status(201).send({ article });
+    })
+    .catch(next);
+};

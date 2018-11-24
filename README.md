@@ -189,7 +189,7 @@ POST /api/articles/:article_id/comments
 
 ```http
 Original = PATCH /api/comments/:comment_id
-USE = PATCH /api/articles/:article_id/comments/comment_id
+USE = PATCH /api/articles/:article_id/comments/:comment_id
 ```
 
 - accepts an object in the form `{  inc_votes: newVote  }`
@@ -200,7 +200,7 @@ USE = PATCH /api/articles/:article_id/comments/comment_id
 
 ```http
 Original = DELETE /api/comments/:comment_id
-USE = DELETE /api/articles/:article_id/comments/comment_id
+USE = DELETE /api/articles/:article_id/comments/:comment_id
 ```
 
 - should delete the given comment by `comment_id`
