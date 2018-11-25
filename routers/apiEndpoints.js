@@ -21,7 +21,6 @@ exports.apiEndpoints = [
             limit: 'limits the number of responses',
             sort_by: 'sorts the articles by any valid column',
             p: 'specifies the page at which to start',
-            // TODO: fix order to be in sort_ascending
             sort_ascending: "when 'true' returns the results sorted in ascending order",
           },
         },
@@ -40,7 +39,6 @@ exports.apiEndpoints = [
             limit: 'limits the number of responses',
             sort_by: 'sorts the articles by any valid column',
             p: 'specifies the page at which to start',
-            // TODO: fix order to be in sort_ascending
             sort_ascending: "when 'true' returns the results sorted in ascending order",
           },
         },
@@ -71,7 +69,6 @@ exports.apiEndpoints = [
             limit: 'limits the number of responses',
             sort_by: 'sorts the articles by any valid column',
             p: 'specifies the page at which to start',
-            // TODO: fix order to be in sort_ascending
             sort_ascending: "when 'true' returns the results sorted in ascending order",
           },
         },

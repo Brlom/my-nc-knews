@@ -10,6 +10,10 @@ const { handle400s, handle404s, handle422s, handle500s } = require('./errors/ind
 
 app.use(bodyParser.json());
 
+app.get('/', (req, res) => {
+  res.send({ msg: 'Welcome to the NC-Knews Homepage!' })
+})
+
 app.use('/api', apiRouter);
 
 app.use('/*', (req, res, next) => {
