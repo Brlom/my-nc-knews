@@ -10,7 +10,6 @@ describe('/api/articles', () => {
     beforeEach(() => db.migrate.rollback()
         .then(() => db.migrate.latest())
         .then(() => db.seed.run()));
-    // after(() => db.destroy());
     it('GET returns 200 and an array of article objects', () => request
         .get('/api/articles')
         .expect(200)

@@ -3,7 +3,7 @@ const {
   topicData,
   userData,
   commentData,
-} = require('../data');
+} = require('../utils');
 
 exports.seed = function (knex, Promise) {
   const user_data = [];

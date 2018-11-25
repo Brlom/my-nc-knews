@@ -1,250 +1,102 @@
-# BE2-NC-Knews
+# Back-end Project northCoders-Knews
 
-## Northcoders News API
+## my-nc-knews
+A news app created for northCoders bootcamp. It is written in javaScript using a database library called 'knex', as well as 'express' which is a Node.js web application framework. It keeps track of topics, articles, users and comments. The app can be run in a development environment, or on [heroku](https://my-nc-knews.herokuapp.com). 
 
-### Background
+### Getting Started
 
-We will be building the API to use in the Northcoders News Sprint during the Front End block of the course.
+1. Make sure you have postgreSQL installed on your machine before the next step.
+2. Fork and Clone this repository.
+3. Once cloned to your machine, run `npm install` in your terminal to install all dependencies.
+4. Create a file called knexfile.js in your route directory. This is where you will put your configuration settings(see 'Installing' below).
+5. Run `npm run start` to start the node server on your local environment. 
 
-Our database will be PSQL, and you will interact with it using [Knex](https://knexjs.org).
+### Prerequisites
 
+#### Installing PostgreSQL
+For Linux install postgreSQL using the following command: `sudo app-get install postgresql`. Make note of the password you create. Once postgreSQL is installed create a new user `create user -U postgres <username>`. Type in the password you created in the previous step. 
 
-### Step 1 - Seeding
+For Mac users, please follow the installation instructions on the [official postgreSQL](https://www.postgresql.org/download/) webpage.
 
-Data has been provided for both testing and development environments so you will need to write a seed function to seed your database. You should think about how you will write your seed file to use either test data or dev data depending on the environment that you're running in. 
+To create the database use the following command: `createdb test_NC_Knews` and `createdb NC_Knews` to create the test database and the database respectively. 
 
-1. You should have separate tables for topics, articles, users and comments, and you will need to think carefully about the order in which you seed your data. 
+### Installing
 
-TODO: topic slugs should be unique, so they act as the primary keys in this table.  If you wish to do a join with the topics table it should be done with the topic field.
+Before running the application you will need to set up your database connection in the knexfile.js you previously created. Here is an example configuration: 
 
-
-* Each topic should have:
-    - `slug` field which is a unique string that acts as the table's primary key
-    - `description` field which is a string giving a brief description of a given topic
-
-* Each user should have:
-    - `user_id` which is a primary key for the topics table
-    - `username` 
-    - `avatar_url` 
-    - `name` 
-
-* Each article should have:
-    - `article_id` which is the primary key
-    - `title`
-    - `body` 
-    - `votes` defaults to 0
-    - `topic` field which references the slug in the topics table
-    - `user_id` field that references a user's primary key.
-    - `created_at` defaults to the current date
-
-
-* Each comment should have:
-    - `comment_id` which is the primary key
-    - `user_id` field that references a user's primary key
-    - `article_id` field that references an article's primary key
-    - `votes` defaults to 0
-    - `created_at` defaults to the current date
-    - `body`
-
-- NOTE:  psql expects Date types to be in a date format - not a timestamp! However, you can easily turn a timestamp into a date using js...
-
-
-### Step 2 - Building and Testing
-
-1.  Build your Express app
-2.  Mount an API Router onto your app
-3.  Define the routes described below
-4.  Define controller functions for each of your routes. 
-5.  Use proper project configuration from the offset, being sure to treat development and test differently.
-6.  Test each route **as you go**, checking both successful requests and the variety of errors you could expect to encounter.
-
-
-**HINT** You will need to take advantage of knex migrations in order to efficiently test your application.
-
-### Routes 
-
-
-Your server should have the following end-points:
-
-
-```http
-GET /api/topics
 ```
-- responds with an array of topic objects  - each object should have a `slug` and `description` property.
+const { DB_URL } = process.env;
 
+module.exports = {
+  development: {
+    client: 'pg',
+    connection: {
+      database: 'NC_Knews',
+      user: 'yourUserGoesHere',
+      password: 'yourPasswordGoesHere',
+    },
+    migrations: {
+      directory: 'db/migrations',
+    },
+    seeds: {
+      directory: 'db/seeds',
+    },
+  },
+  production: {
+    client: 'pg',
+    connection: `${DB_URL}?ssl=true`,
+    migrations: {
+      directory: 'db/migrations',
+    },
+    seeds: {
+      directory: 'db/seeds',
+    },
+  },
+  test: {
+    client: 'pg',
+    connection: {
+      host: 'localhost',
+      user: 'yourUserGoesHere',
+      password: 'yourPasswordGoesHere',
+      database: 'test_NC_Knews',
+    },
+    migrations: {
+      directory: 'db/migrations',
+    },
+    seeds: {
+      directory: 'db/seeds',
+    },
+  },
+};
 
-```http
-POST /api/topics
-```
-- accepts an object containing `slug` and `description` property, the `slug` must be unique
-- responds with the posted topic object
-
-
-```http
-GET /api/topics/:topic/articles
 ```
 
-- responds with an array of article objects for a given topic
-- each article should have: 
-    - `author` which is the `username` from the users table,
-    - `title`
-    - `article_id`
-    - `votes`
-    - `comment_count` which is the accumulated count of all the comments with this article_id.  You should make use of knex queries in order to achieve this.
-    - `created_at` 
-    - `topic`
+Once your configuration is set up, you should be able to run the server by using the command: `npm run start`.
 
+You can now point your browser to `localhost:9090/api` to get an overview of all the endpoints available for the app. 
 
-Queries
-* This route should accept the following queries:
-    - `limit`, which limits the number of responses (defaults to 10)
-    - `sort_by`, which sorts the articles by any valid column (defaults to date)
-    - `p`, stands for page which specifies the page at which to start (calculated using limit)
-    - `sort_ascending`, when "true" returns the results sorted in ascending order (defaults to descending)    
+### Examples
 
+You can run all of the unit tests by typing in the command `npm run test`.
 
-```http
-POST /api/topics/:topic/articles
-```
+**NB**: If adding additional tests, be mindful of the fact that the test files run alphabetically and the last test needs to destroy the database connection. If the connection is not destroyed, the tests hang. Currently this is done in topics.spec.js. 
 
-- accepts an object containing a `title` , `body` and a `user_id` property
-- responds with the posted article
+### Deployment
 
+[Deployment instructions](https://devcenter.heroku.com/articles/getting-started-with-nodejs). 
 
-```http
-GET /api/articles
-```
-- responds with an array of article objects
-- each article should have: 
-    - `author` which is the `username` from the users table,
-    - `title`
-    - `article_id`
-    - `votes`
-    - `comment_count` which is the accumulated count of all the comments with this article_id.  You should make use of knex queries in order to achieve this.
-    - `created_at` 
-    - `topic`
+### Built With
+- Node.js 
+- express web framework
+- knexjs
+- chai
+- mocha
 
-Queries
-* This route should accept the following queries:
-    - `limit`, which limits the number of responses (defaults to 10)
-    - `sort_by`, which sorts the articles by any valid column (defaults to date)
-    - `p`, stands for page which specifies the page at which to start (calculated using limit)
-    - `sort_ascending`, when "true" returns the results sorted in ascending order (defaults to descending)  
+### Versioning
+Github has been used for versioning. For the versions available, see the tags on this repository.
 
+### Authors
+Britannia Lomax
 
-```http
-GET /api/articles/:article_id
-```
-- responds with an article object 
-- each article should have: 
-    - `article_id`
-    - `author` which is the `username` from the users table,
-    - `title`
-    - `votes`
-    - `comment_count` which is the accumulated count of all the comments with this article_id.  You should make use of knex queries in order to achieve this.
-    - `created_at` 
-    - `topic`
-
-```http
-PATCH /api/articles/:article_id
-```
-- accepts an object in the form `{  inc_votes: newVote  }`
-    - `newVote` will indicate how much the `votes` property in the database should be updated by
-    E.g  `{ inc_votes : 1 }` would increment the current article's vote property by 1
-         `{ inc_votes : -100 }` would decrement the current article's vote property by 100
-
-```http
-DELETE /api/articles/:article_id
-```
-
-- should delete the given article by `article_id`
-- should respond with an empty object
-
-
-```http
-GET /api/articles/:article_id/comments
-```
-- responds with an array of comments for the given `article_id`
-- each comment should have
-    - `comment_id`
-    - `votes`
-    - `created_at`
-    - `author` which is the `username` from the users table
-    - `body`
-
-Queries
-* This route should accept the following queries:
- - limit, which limits the number of responses (defaults to 10)
- - sort_by, which sorts the articles by any valid column (defaults to date)
- - p, stands for page which specifies the page at which to start (calculated using limit)
- - sort_ascending, when "true" returns the results sorted in ascending order (defaults to descending)  
-
-
-```http
-POST /api/articles/:article_id/comments
-```
-- accepts an object with `user_id` and `body`
-- responds with the posted comment
-
-
-```http
-Original = PATCH /api/comments/:comment_id
-USE = PATCH /api/articles/:article_id/comments/:comment_id
-```
-
-- accepts an object in the form `{  inc_votes: newVote  }`
-    - `newVote` will indicate how much the `votes` property in the database should be updated by
-    E.g  `{ inc_votes : 1 }` would increment the current article's vote property by 1
-         `{ inc_votes : -1 }` would decrement the current article's vote property by 1
-
-
-```http
-Original = DELETE /api/comments/:comment_id
-USE = DELETE /api/articles/:article_id/comments/:comment_id
-```
-
-- should delete the given comment by `comment_id`
-- should respond with an empty object
-
-
-
-
-```http
-GET /api/users
-```
-- should respond with an array of user objects
-- each user object should have
-    - `user_id`
-    - `username`
-    - `avatar_url`
-    - `name`
-
-
-```http
-GET /api/users/:username
-```
-
-- should respond with a user object
-- each user should have
-    - `user_id`
-    - `username`
-    - `avatar_url`
-    - `name`
-
-
-```http
-GET /api 
-```
-- Serves JSON describing all the available endpoints on your API
-
-
-### Step 3 - Hosting
-
-Make sure your application and your database is hosted using heroku
-
-
-### Step 4 - Preparing for your review and portfolio
-
-Finally, you should write a README for this project (and remove this one). The README should be broken down like this: https://gist.github.com/PurpleBooth/109311bb0361f32d87a2
-
-It should also include the link where your herokuapp is hosted.
+### Acknowledgements
+All of the ncHelpers & tutors who helped BE2 from 12.11.18-26.11.18.

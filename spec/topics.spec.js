@@ -10,7 +10,8 @@ describe('/api/topics', () => {
   beforeEach(() => db.migrate.rollback()
     .then(() => db.migrate.latest())
     .then(() => db.seed.run()));
-  // after(() => db.destroy());
+  // currently topics.spec.js is the last file to run, therefore they destroy connection after this. 
+  after(() => db.destroy());
   it('GET returns 200 and topics array with topics objects', () => request
     .get('/api/topics')
     .expect(200)

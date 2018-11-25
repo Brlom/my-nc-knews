@@ -10,7 +10,6 @@ describe('/api', () => {
   beforeEach(() => db.migrate.rollback()
     .then(() => db.migrate.latest())
     .then(() => db.seed.run()));
-  // after(() => db.destroy());
   it('GET returns 200 and apiEndpoints describer', () => request
     .get('/api')
     .expect(200)
