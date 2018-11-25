@@ -20,9 +20,16 @@ exports.handle404s = (err, req, res, next) => {
   next(err);
 };
 
-// exports.handle422s = (err, req, res, next) => {
-
-// };
+exports.handle422s = (err, req, res, next) => {
+  const code422s = {
+    23505: 'Unique key constraint: key already exists'
+  }
+  if (code422s[err.code]) {
+    res.status(err.status || 422).send(err.msg || code422s[err.code]);
+  } else {
+    next(err);
+  }
+};
 
 exports.handle500s = (err, req, res, next) => {
   res.status(err.status || 500).send(err.msg || 'internal server error');

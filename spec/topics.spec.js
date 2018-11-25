@@ -10,7 +10,7 @@ describe('/api/topics', () => {
   beforeEach(() => db.migrate.rollback()
     .then(() => db.migrate.latest())
     .then(() => db.seed.run()));
-  after(() => db.destroy());
+  // after(() => db.destroy());
   it('GET returns 200 and topics array with topics objects', () => request
     .get('/api/topics')
     .expect(200)
@@ -45,13 +45,29 @@ describe('/api/topics', () => {
         expect(body.topic).to.have.all.keys('slug', 'description');
       });
   });
+  it('POST returns 201 and new topic object', () => {
+    const newTopic = {
+      slug: 'chuckNorris',
+      description: 'You don\'t find him, he find\'s you',
+    };
+    return request
+      .post('/api/topics')
+      .send(newTopic)
+      .expect(201)
+      .then(({ body }) => {
+        return request
+          .post('/api/topics')
+          .send(newTopic)
+          .expect(422)
+      });
+  });
   it('POST returns 400', () => {
     const newTopic = {
       slg: 'ChuckNorris',
       description: 'You don\'t find him, he find\'s you',
     };
     return request
-      .post('/api/topics/')
+      .post('/api/topics')
       .send(newTopic)
       .expect(400);
   });
@@ -70,6 +86,9 @@ describe('/api/topics', () => {
         'topic',
       );
     }));
+  it('GET returns 404 when non-existent topic is used', () => request
+    .get('/api/topics/shannara/articles')
+    .expect(404));
   it('Non-existent method returns 405 and an error message', () => {
     const url = '/api/topics/cats/articles';
     const methods = [request.put(url), request.patch(url), request.delete(url)];
@@ -114,6 +133,12 @@ describe('/api/topics', () => {
     .then(({ body }) => {
       expect(body.length).to.equal(8);
     }));
+  it('GET returns 404 and empty object', () => request
+    .get('/api/topics/mitch/articles?p=999')
+    .expect(404)
+    .then(({ body }) => {
+      expect(body.length).to.equal(0);
+    }));
   it('POST returns 201 and new article', () => {
     const newArticle = {
       title: 'Around the world in 22 seconds',
@@ -128,5 +153,16 @@ describe('/api/topics', () => {
         expect(body.article).to.be.an('object');
         expect(body.article).to.have.all.keys('article_id', 'title', 'created_at', 'votes', 'body', 'user_id', 'topic');
       });
+  });
+  it('POST returns 400 and an error message', () => {
+    const newArticle = {
+      titl: 'Sweet dreams',
+      body: 'Sweet dreams are made of cheese, who am I to dis a brie',
+      user_id: 1,
+    };
+    return request
+      .post('/api/topics/cats/articles')
+      .send(newArticle)
+      .expect(400);
   });
 });

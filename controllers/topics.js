@@ -39,24 +39,33 @@ exports.getArticlesByTopic = (req, res, next) => {
     .orderBy(sortBy || 'created_at', sort_ascending ? 'asc' : 'desc')
     .offset(p || 0)
     .then((articles) => {
-      res.status(200).send(articles);
+      if (articles.length > 0) {
+        res.status(200);
+      } else {
+        res.status(404)
+      }
+      res.send(articles)
     })
     .catch(next);
 };
 
 exports.createArticleWithTopic = (req, res, next) => {
-  // const { topic } = req.params;
-  // TODO: fix this
+  const { topic } = req.params;
   db('articles')
     .insert({
       title: req.body.title,
       body: req.body.body,
       user_id: req.body.user_id,
-      topic: req.params.topic,
+      topic: topic,
     })
     .returning('*')
     .then(([article]) => {
-      res.status(201).send({ article });
+      if (article) {
+        res.status(201)
+      } else {
+        res.status(404)
+      }
+      res.send({ article });
     })
     .catch(next);
 };

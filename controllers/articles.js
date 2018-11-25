@@ -51,7 +51,12 @@ exports.updateVotesById = (req, res, next) => {
     .increment('votes', inc_votes)
     .returning('*')
     .then(([article]) => {
-      res.status(200).send(article);
+      if (article) {
+        res.status(200)
+      } else {
+        res.status(404)
+      }
+      res.send(article);
     })
     .catch(next);
 };
@@ -61,8 +66,13 @@ exports.deleteArticleById = (req, res, next) => {
   return db('articles')
     .where('articles.article_id', article_id)
     .del()
-    .then(() => {
-      res.status(200).send();
+    .then((numDeleted) => {
+      if (numDeleted) {
+        res.status(200)
+      } else {
+        res.status(404)
+      }
+      res.send();
     })
     .catch(next);
 };
@@ -87,22 +97,37 @@ exports.getCommentsByArticleId = (req, res, next) => {
     .orderBy(sortBy || 'created_at', sort_ascending ? 'asc' : 'desc')
     .offset(p || 0)
     .then((comments) => {
-      res.status(200).send(comments);
+      if (comments.length > 0) {
+        res.status(200)
+      } else {
+        res.status(404)
+      }
+      res.send(comments);
     })
     .catch(next);
 };
 
 exports.postCommentByArticleId = (req, res, next) => {
   const { article_id } = req.params;
+  const { body, user_id } = req.body;
+  // test data has comments without users, but out of personal preferance I do not want this to be allowed
+  if (!body || !user_id) {
+    res.status(400).send()
+  }
   return db('comments')
     .insert({
       article_id,
-      user_id: req.body.user_id,
-      body: req.body.body,
+      user_id,
+      body,
     })
     .returning('*')
     .then(([comment]) => {
-      res.status(201).send(comment);
+      if (comment) {
+        res.status(201)
+      } else {
+        res.status(400)
+      }
+      res.send(comment);
     })
     .catch(next);
 };
@@ -116,7 +141,12 @@ exports.updateCommentVotes = (req, res, next) => {
     .increment('votes', inc_votes)
     .returning('*')
     .then(([comment]) => {
-      res.status(200).send(comment);
+      if (comment) {
+        res.status(200)
+      } else {
+        res.status(404)
+      }
+      res.send(comment);
     })
     .catch(next);
 };
@@ -127,8 +157,13 @@ exports.deleteCommentById = (req, res, next) => {
     .where('article_id', article_id)
     .where('comment_id', comment_id)
     .del()
-    .then(() => {
-      res.status(200).send();
+    .then((numDeleted) => {
+      if (numDeleted) {
+        res.status(200)
+      } else {
+        res.status(404)
+      }
+      res.send();
     })
     .catch(next);
 };
