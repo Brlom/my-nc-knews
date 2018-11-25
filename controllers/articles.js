@@ -4,7 +4,7 @@ exports.getAllArticles = (req, res, next) => {
   const {
     limit,
     sortBy,
-    order,
+    sort_ascending,
     p,
   } = req.query;
   return db('articles')
@@ -15,7 +15,7 @@ exports.getAllArticles = (req, res, next) => {
     .groupBy('articles.article_id')
     .groupBy('users.username')
     .limit(limit || 10)
-    .orderBy(sortBy || 'created_at', order || 'desc')
+    .orderBy(sortBy || 'created_at', sort_ascending ? 'asc' : 'desc')
     .offset(p || 0)
     .then((articles) => {
       res.status(200).send(articles);
@@ -72,7 +72,7 @@ exports.getCommentsByArticleId = (req, res, next) => {
   const {
     limit,
     sortBy,
-    order,
+    sort_ascending,
     p,
   } = req.query;
   return db('comments')
@@ -84,7 +84,7 @@ exports.getCommentsByArticleId = (req, res, next) => {
     .groupBy('comments.comment_id')
     .where('articles.article_id', article_id)
     .limit(limit || 10)
-    .orderBy(sortBy || 'created_at', order || 'desc')
+    .orderBy(sortBy || 'created_at', sort_ascending ? 'asc' : 'desc')
     .offset(p || 0)
     .then((comments) => {
       res.status(200).send(comments);

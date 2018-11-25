@@ -9,20 +9,26 @@ const {
   updateCommentVotes,
   deleteCommentById,
 } = require('../controllers/articles');
+const { handle405s } = require('../controllers/errors');
 
-articlesRouter.get('/', getAllArticles);
+articlesRouter.route('/')
+  .get(getAllArticles)
+  .all(handle405s);
 
 articlesRouter.route('/:article_id')
   .get(getArticleById)
   .patch(updateVotesById)
-  .delete(deleteArticleById);
+  .delete(deleteArticleById)
+  .all(handle405s);
 
 articlesRouter.route('/:article_id/comments')
   .get(getCommentsByArticleId)
-  .post(postCommentByArticleId);
+  .post(postCommentByArticleId)
+  .all(handle405s);
 
 articlesRouter.route('/:article_id/comments/:comment_id')
   .patch(updateCommentVotes)
-  .delete(deleteCommentById);
+  .delete(deleteCommentById)
+  .all(handle405s);
 
 module.exports = articlesRouter;

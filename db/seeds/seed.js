@@ -1,5 +1,8 @@
 const {
-  articleData, topicData, userData, commentData,
+  articleData,
+  topicData,
+  userData,
+  commentData,
 } = require('../data');
 
 exports.seed = function (knex, Promise) {
