@@ -3,16 +3,15 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const apiRouter = require('./routers/api');
-const { handle400s, handle404s, handle422s, handle500s } = require('./errors/index');
-
-// app.use(express.static('public'));
-// app.set('view engine', 'ejs');
+const {
+  handle400s, handle404s, handle422s, handle500s,
+} = require('./errors/index');
 
 app.use(bodyParser.json());
 
 app.get('/', (req, res) => {
-  res.send({ msg: 'Welcome to the NC-Knews Homepage!' })
-})
+  res.send({ msg: 'Welcome to the NC-Knews Homepage!' });
+});
 
 app.use('/api', apiRouter);
 

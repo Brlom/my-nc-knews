@@ -10,7 +10,7 @@ describe('/api/topics', () => {
   beforeEach(() => db.migrate.rollback()
     .then(() => db.migrate.latest())
     .then(() => db.seed.run()));
-  // currently topics.spec.js is the last file to run, therefore they destroy connection after this. 
+  // currently topics.spec.js is the last file to run, therefore they destroy connection after this.
   after(() => db.destroy());
   it('GET returns 200 and topics array with topics objects', () => request
     .get('/api/topics')
@@ -55,12 +55,10 @@ describe('/api/topics', () => {
       .post('/api/topics')
       .send(newTopic)
       .expect(201)
-      .then(({ body }) => {
-        return request
-          .post('/api/topics')
-          .send(newTopic)
-          .expect(422)
-      });
+      .then(({ body }) => request
+        .post('/api/topics')
+        .send(newTopic)
+        .expect(422));
   });
   it('POST returns 400', () => {
     const newTopic = {
@@ -76,9 +74,13 @@ describe('/api/topics', () => {
     .get('/api/topics/cats/articles')
     .expect(200)
     .then(({ body }) => {
-      expect(body).to.be.an('array');
-      expect(body[0]).to.have.all.keys(
+      expect(body).to.be.an('object');
+      expect(body.articles).to.be.an('array');
+      expect(body.articles[0]).to.have.all.keys(
         'author',
+        'avatar_url',
+        'user_id',
+        'name',
         'title',
         'article_id',
         'votes',
@@ -101,7 +103,7 @@ describe('/api/topics', () => {
       .get(`/api/topics/cats/articles?limit=${limit}`)
       .expect(200)
       .then(({ body }) => {
-        expect(body.length).to.be.most(limit);
+        expect(body.articles.length).to.be.most(limit);
       });
   });
   it('GET returns 200 and an array of objects sorted by date', () => {
@@ -111,9 +113,9 @@ describe('/api/topics', () => {
       .get('/api/topics/mitch/articles?sortBy=created_at&limit=11')
       .expect(200)
       .then(({ body }) => {
-        expect(body.length).to.equal(11);
-        expect(body[0].title).to.equal(firstArticleDesc);
-        expect(body[body.length - 1].title).to.equal(lastArticleDesc);
+        expect(body.articles.length).to.equal(11);
+        expect(body.articles[0].title).to.equal(firstArticleDesc);
+        expect(body.articles[body.articles.length - 1].title).to.equal(lastArticleDesc);
       });
   });
   it('GET returns 200 and an array of objects sorted in asc order', () => {
@@ -123,22 +125,22 @@ describe('/api/topics', () => {
       .get('/api/topics/mitch/articles?sort_ascending=true&limit=11')
       .expect(200)
       .then(({ body }) => {
-        expect(body.length).to.equal(11);
-        expect(body[0].title).to.equal(firstArticleDesc);
-        expect(body[body.length - 1].title).to.equal(lastArticleDesc);
+        expect(body.articles.length).to.equal(11);
+        expect(body.articles[0].title).to.equal(firstArticleDesc);
+        expect(body.articles[body.articles.length - 1].title).to.equal(lastArticleDesc);
       });
   });
   it('GET returns 200 and a specified start page', () => request
-    .get('/api/topics/mitch/articles?p=3')
+    .get('/api/topics/mitch/articles?p=4')
     .expect(200)
     .then(({ body }) => {
-      expect(body.length).to.equal(8);
+      expect(body.articles.length).to.equal(8);
     }));
   it('GET returns 404 and empty object', () => request
     .get('/api/topics/mitch/articles?p=999')
     .expect(404)
     .then(({ body }) => {
-      expect(body.length).to.equal(0);
+      expect(body.articles.length).to.equal(0);
     }));
   it('POST returns 201 and new article', () => {
     const newArticle = {

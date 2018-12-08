@@ -1,4 +1,4 @@
-DROP DATABASE IF EXISTS test_NC_Knews;
-CREATE DATABASE test_NC_Knews;
+DROP DATABASE IF EXISTS test_nc_knews;
+CREATE DATABASE test_nc_knews;
 
-\c test_NC_Knews;
+\c test_nc_knews;

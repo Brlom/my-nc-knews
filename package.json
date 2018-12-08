@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node listen.js",
     "test": "psql -f db/test.seed.sql && mocha spec",
-    "seed": "psql -f db/seed.sql",
+    "seed": "psql -f db/seed.sql && psql -f db/test.seed.sql",
     "lint": "eslint ./",
     "fix": "eslint ./ --fix",
     "pre-commit": "npm t",

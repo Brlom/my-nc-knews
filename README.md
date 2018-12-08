@@ -18,7 +18,7 @@ For Linux install postgreSQL using the following command: `sudo app-get install 
 
 For Mac users, please follow the installation instructions on the [official postgreSQL](https://www.postgresql.org/download/) webpage.
 
-To create the database use the following command: `createdb test_NC_Knews` and `createdb NC_Knews` to create the test database and the database respectively. 
+To create and seed the database run `npm run seed`. This will create both the production and test databases.
 
 ### Installing
 
@@ -31,7 +31,7 @@ module.exports = {
   development: {
     client: 'pg',
     connection: {
-      database: 'NC_Knews',
+      database: 'nc_knews',
       user: 'yourUserGoesHere',
       password: 'yourPasswordGoesHere',
     },
@@ -58,7 +58,7 @@ module.exports = {
       host: 'localhost',
       user: 'yourUserGoesHere',
       password: 'yourPasswordGoesHere',
-      database: 'test_NC_Knews',
+      database: 'test_nc_knews',
     },
     migrations: {
       directory: 'db/migrations',
@@ -70,6 +70,8 @@ module.exports = {
 };
 
 ```
+
+To set up the schema first run `npx knex migrate:latest`. Then run `npx knex seed:run` to insert the seed data. 
 
 Once your configuration is set up, you should be able to run the server by using the command: `npm run start`.
 

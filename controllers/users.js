@@ -7,7 +7,7 @@ exports.getAllUsers = (req, res, next) => db('users')
   })
   .catch(next);
 
-exports.getUserById = (req, res, next) => {
+exports.getUserByUsername = (req, res, next) => {
   const { username } = req.params;
   return db('users')
     .select()
