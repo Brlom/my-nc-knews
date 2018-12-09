@@ -1,11 +1,14 @@
 const express = require('express');
 
 const app = express();
+const cors = require('cors');
 const bodyParser = require('body-parser');
 const apiRouter = require('./routers/api');
 const {
   handle400s, handle404s, handle422s, handle500s,
 } = require('./errors/index');
+
+app.use(cors());
 
 app.use(bodyParser.json());
 
