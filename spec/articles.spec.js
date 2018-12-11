@@ -77,7 +77,7 @@ describe('/api/articles', () => {
     .get('/api/articles/1')
     .expect(200)
     .then(({ body }) => {
-      expect(Object.keys(body).length).to.equal(10);
+      expect(Object.keys(body).length).to.equal(11);
       expect(body).to.be.an('object');
       expect(body).to.have.all.keys(
         'author',
@@ -86,6 +86,7 @@ describe('/api/articles', () => {
         'name',
         'title',
         'article_id',
+        'body',
         'votes',
         'comment_count',
         'created_at',

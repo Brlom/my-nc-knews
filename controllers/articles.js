@@ -25,7 +25,7 @@ exports.getAllArticles = (req, res, next) => {
 exports.getArticleById = (req, res, next) => {
   const { article_id } = req.params;
   return db('articles')
-    .select('articles.article_id', 'title', 'articles.votes', 'articles.created_at', 'topic', 'users.username as author', 'users.name', 'users.avatar_url', 'users.user_id')
+    .select('articles.article_id', 'articles.body', 'title', 'articles.votes', 'articles.created_at', 'topic', 'users.username as author', 'users.name', 'users.avatar_url', 'users.user_id')
     .where('articles.article_id', article_id)
     .join('users', 'articles.user_id', 'users.user_id')
     .leftJoin('comments', 'articles.article_id', 'comments.article_id')
