@@ -22,7 +22,7 @@ module.exports = [
   {
     username: 'weegembump',
     name: 'Gemma Bump',
-    avatar_url: 'https://vignette.wikia.nocookie.net/mrmen/images/7/7e/MrMen-Bump.png/revision/latest/scale-to-width-down/250?cb=20180123225553',
+    avatar_url: 'https://www.upandrunning.co.uk/media/catalog/product/cache/1/image/650x/040ec09b1e35df139433887a97daa66f/m/r/mr-bump.jpg',
   },
   {
     username: 'jessjelly',
