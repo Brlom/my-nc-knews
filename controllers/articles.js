@@ -8,7 +8,7 @@ exports.getAllArticles = (req, res, next) => {
     p,
   } = req.query;
   return db('articles')
-    .select('articles.article_id', 'title', 'articles.votes', 'articles.created_at', 'topic', 'users.username as author', 'users.name', 'users.avatar_url', 'users.user_id')
+    .select('articles.article_id', 'title', 'articles.votes', 'articles.created_at', 'articles.body', 'topic', 'users.username as author', 'users.name', 'users.avatar_url', 'users.user_id')
     .join('users', 'articles.user_id', 'users.user_id')
     .leftJoin('comments', 'articles.article_id', 'comments.article_id')
     .count('comments as comment_count')
@@ -25,7 +25,7 @@ exports.getAllArticles = (req, res, next) => {
 exports.getArticleById = (req, res, next) => {
   const { article_id } = req.params;
   return db('articles')
-    .select('articles.article_id', 'articles.body', 'title', 'articles.votes', 'articles.created_at', 'topic', 'users.username as author', 'users.name', 'users.avatar_url', 'users.user_id')
+    .select('articles.article_id', 'articles.body', 'title', 'articles.votes', 'articles.created_at', 'articles.body', 'topic', 'users.username as author', 'users.name', 'users.avatar_url', 'users.user_id')
     .where('articles.article_id', article_id)
     .join('users', 'articles.user_id', 'users.user_id')
     .leftJoin('comments', 'articles.article_id', 'comments.article_id')
@@ -40,6 +40,30 @@ exports.getArticleById = (req, res, next) => {
     })
     .catch(next);
 };
+
+exports.getArticlesByAuthor = (req, res, next) => {
+  const { author } = req.params;
+  const {
+    limit,
+    sort_by,
+    sort_ascending,
+    p,
+  } = req.query;
+  return db('articles')
+    .select('articles.article_id', 'articles.body', 'title', 'articles.votes', 'articles.created_at', 'articles.body', 'topic', 'users.username as author', 'users.name', 'users.avatar_url', 'users.user_id')
+    .where('users.username', author)
+    .join('users', 'articles.user_id', 'users.user_id')
+    .leftJoin('comments', 'articles.article_id', 'comments.article_id')
+    .count('comments as comment_count')
+    .groupBy('articles.article_id', 'users.user_id')
+    .limit(limit || 10)
+    .orderBy(sort_by || 'created_at', sort_ascending ? 'asc' : 'desc')
+    .offset(p - 1 || 0)
+    .then((articles) => {
+      res.status(200).send({ articles });
+    })
+    .catch(next);
+}
 
 exports.updateVotesById = (req, res, next) => {
   const { article_id } = req.params;

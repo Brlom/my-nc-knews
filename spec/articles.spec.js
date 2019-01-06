@@ -23,6 +23,7 @@ describe('/api/articles', () => {
         'user_id',
         'title',
         'article_id',
+        'body',
         'votes',
         'comment_count',
         'created_at',
@@ -103,6 +104,76 @@ describe('/api/articles', () => {
     const url = '/api/articles/1';
     const methods = [request.put(url)];
     return Promise.all(methods.map(object => object.expect(405)));
+  });
+  it('GET returns 200 and an array of article objects', () => request
+    .get('/api/articles/user/rogersop')
+    .expect(200)
+    .then(({ body }) => {
+      expect(body.articles.length).to.equal(3);
+      expect(body).to.be.an('object');
+      expect(body.articles[0]).to.have.all.keys(
+        'author',
+        'avatar_url',
+        'name',
+        'user_id',
+        'title',
+        'article_id',
+        'body',
+        'votes',
+        'comment_count',
+        'created_at',
+        'topic',
+      );
+    }));
+  it('Non-existent method returns 405 and an error message', () => {
+    const url = '/api/articles/user/rogersop';
+    const methods = [request.post(url), request.put(url), request.patch(url), request.delete(url)];
+    return Promise.all(methods.map(object => object.expect(405)));
+  });
+  it('GET returns 200 and an object where responses are limited', () => {
+    const limit = 2;
+    return request
+      .get(`/api/articles/user/rogersop?limit=${limit}`)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles.length).to.be.most(limit);
+      });
+  });
+  it('GET returns 200 and an array of objects sorted by date', () => {
+    const firstArticleDesc = 'Student SUES Mitch!';
+    const lastArticleDesc = 'UNCOVERED: catspiracy to bring down democracy';
+    return request
+      .get('/api/articles/user/rogersop?sort_by=created_at&limit=2')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles.length).to.equal(2);
+        expect(body.articles[0].title).to.equal(firstArticleDesc);
+        expect(body.articles[body.articles.length - 1].title).to.equal(lastArticleDesc);
+      });
+  });
+  it('GET returns 200 and an array of objects sorted in asc order', () => {
+    const firstArticleDesc = 'Seven inspirational thought leaders from Manchester UK';
+    const lastArticleDesc = 'UNCOVERED: catspiracy to bring down democracy';
+    return request
+      .get('/api/articles/user/rogersop?sort_ascending=true&limit=2')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles.length).to.equal(2);
+        expect(body.articles[0].title).to.equal(firstArticleDesc);
+        expect(body.articles[body.articles.length - 1].title).to.equal(lastArticleDesc);
+      });
+  });
+  it('GET returns 200 and a specified start page', () => request
+    .get('/api/articles?p=4')
+    .expect(200)
+    .then(({ body }) => {
+      expect(body.articles.length).to.equal(9);
+    }));
+  it('GET returns 404 and an error message', () => {
+    const limit = 5;
+    return request
+      .get(`/api/articles/999/rogersop?limit=${limit}`)
+      .expect(404);
   });
   it('PATCH returns 200 and updates votes', () => {
     const updatedArticle = {

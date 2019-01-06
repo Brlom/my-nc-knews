@@ -2,6 +2,7 @@ const articlesRouter = require('express').Router();
 const {
   getAllArticles,
   getArticleById,
+  getArticlesByAuthor,
   updateVotesById,
   deleteArticleById,
   getCommentsByArticleId,
@@ -19,6 +20,10 @@ articlesRouter.route('/:article_id')
   .get(getArticleById)
   .patch(updateVotesById)
   .delete(deleteArticleById)
+  .all(handle405s);
+
+articlesRouter.route('/user/:author')
+  .get(getArticlesByAuthor)
   .all(handle405s);
 
 articlesRouter.route('/:article_id/comments')
