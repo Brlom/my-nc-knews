@@ -27,7 +27,7 @@ exports.getArticlesByTopic = (req, res, next) => {
     p,
   } = req.query;
   return db('articles')
-    .select('articles.article_id', 'title', 'articles.votes', 'articles.created_at', 'topic', 'users.username as author', 'users.name', 'users.avatar_url', 'users.user_id')
+    .select('articles.article_id', 'title', 'articles.votes', 'articles.created_at', 'articles.body', 'topic', 'users.username as author', 'users.name', 'users.avatar_url', 'users.user_id')
     .join('topics', 'articles.topic', 'topics.slug')
     .join('users', 'articles.user_id', 'users.user_id')
     .where('articles.topic', topic)
