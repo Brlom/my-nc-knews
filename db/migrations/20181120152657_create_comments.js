@@ -3,7 +3,7 @@ exports.up = function (knex, Promise) {
     commentsTable.increments('comment_id').primary();
     commentsTable.integer('user_id').references('user_id').inTable('users');
     commentsTable.integer('article_id').references('article_id').inTable('articles').onDelete('CASCADE');
-    commentsTable.integer('votes');
+    commentsTable.integer('votes').defaultTo(0).notNullable();
     commentsTable.timestamp('created_at').defaultTo(knex.fn.now());
     commentsTable.string('body', 1000);
   });
