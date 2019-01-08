@@ -109,10 +109,8 @@ exports.getCommentsByArticleId = (req, res, next) => {
   } = req.query;
   return db('comments')
     .select('comments.comment_id', 'comments.votes', 'comments.created_at', 'comments.body', 'users.username as author', 'users.name', 'users.avatar_url', 'users.user_id')
-    .rightJoin('articles', 'comments.article_id', 'articles.article_id')
-    .join('users', 'articles.user_id', 'users.user_id')
-    .groupBy('articles.article_id', 'users.user_id', 'comments.comment_id')
-    .where('articles.article_id', article_id)
+    .leftJoin('users', 'comments.user_id', 'users.user_id')
+    .where('comments.article_id', article_id)
     .limit(limit || 10)
     .orderBy(sort_by || 'created_at', sort_ascending ? 'asc' : 'desc')
     .offset(p - 1 || 0)

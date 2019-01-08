@@ -82,6 +82,7 @@ describe('/api/topics', () => {
         'user_id',
         'name',
         'title',
+        'body',
         'article_id',
         'votes',
         'comment_count',
