@@ -91,6 +91,21 @@ exports.apiEndpoints = [
     },
   },
   {
+    '/api/articles/user/:author': {
+      methods: {
+        GET: {
+          description: 'responds with an array of all article objects for a specified user',
+          available_queries: {
+            limit: 'limits the number of responses',
+            sort_by: 'sorts the articles by any valid column',
+            p: 'specifies the page at which to start',
+            sort_ascending: "when 'true' returns the results sorted in ascending order",
+          },
+        },
+      },
+    },
+  },
+  {
     '/api/users': {
       methods: {
         GET: {
